@@ -1,3 +1,4 @@
+package green.belka.telegram;
 
 import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.meta.TelegramBotsApi;

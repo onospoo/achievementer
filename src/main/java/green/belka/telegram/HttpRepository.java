@@ -1,4 +1,18 @@
+package green.belka.telegram;
+
+import green.belka.telegram.model.Achievement;
+import green.belka.telegram.model.ResponseData;
+import green.belka.telegram.model.User;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
+
 public interface HttpRepository {
+    @POST("/user/")
+    Call<ResponseData<Long>> addUser(@Body User user);
+
+    @POST("/achievement/")
+    Call<ResponseData<Long>> addAchievement(@Body Achievement achievement);
 
 
 /*
