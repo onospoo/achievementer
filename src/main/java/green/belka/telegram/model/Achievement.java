@@ -53,24 +53,3 @@ public class Achievement {
     private String avatar;
 
 }
-//	@OneToOne(optional = false, mappedBy="id")
-//    private User author;
-
-    /*
-    @Setter
-    @Getter
-    private Long limit;
-
-    @Setter
-    @Getter
-    private LocalDate createDate;
-
-    @PreUpdate
-    protected void onUpdate() {
-        createDate = LocalDate.now();
-    }
-
-    @Setter
-    @Getter
-    private LocalDate finishDate;
-    */

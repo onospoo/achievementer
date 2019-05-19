@@ -33,7 +33,7 @@ public class MessageHandler {
     }
 
     private String handleValue(String text, Message message) throws IOException {
-        String answer = "Oops!";
+        String answer = "Wrong input!\nUse /help";
         if(states.containsKey(message.getFrom().getId())){
             State state = states.get(message.getFrom().getId());
             switch (state){
@@ -65,7 +65,8 @@ public class MessageHandler {
                     if(approveResponse.getResultCode().equals(ResultCode.OK)){
                         answer = approveResponse.getData().toString();
                     } else {
-                        answer = approveResponse.getErrorMessage();
+//                        answer = approveResponse.getErrorMessage();
+                        answer = "Code is incorrect!";
                     }
                     break;
 
@@ -75,7 +76,8 @@ public class MessageHandler {
                     if(adminResponse.getResultCode().equals(ResultCode.OK)){
                         answer = adminResponse.getData().toString();
                     } else {
-                        answer = adminResponse.getErrorMessage();
+//                        answer = adminResponse.getErrorMessage();
+                        answer = "You haven't permission to do this!";
                     }
                     break;
             }
@@ -96,8 +98,15 @@ public class MessageHandler {
                 user.setId(Long.valueOf(tgUser.getId()));
                 ResponseData<Long> addUserResponse = httpClient.addUser(user);
                 System.out.println(addUserResponse.toString());
+                Bot.getCurrentBot().send(message.getChatId(), "Welcome to Achivochka!\nRegistration being successful!\nFor more information /help");
                 break;
             case "new":
+                System.out.println(tgUser.getUserName());
+                ResponseData<Boolean> isAdmin = httpClient.isAdmin(tgUser.getUserName());
+                if(isAdmin.getData() == false){
+                    Bot.getCurrentBot().send(message.getChatId(), "Отказано в доступе!");
+                    break;
+                }
                 states.put(tgUser.getId(), State.NEW);
                 Bot.getCurrentBot().send(message.getChatId(), "Print details separated by ';' Name;description;cost(integer);url(image)");
                 break;
@@ -107,10 +116,25 @@ public class MessageHandler {
                 break;
 
             case "admin":
+                if(message.getFrom().getId() != 139105610) {
+                    Bot.getCurrentBot().send(message.getChatId(), "Only admin can upgrade to admin!");
+                    break;
+                }
                 states.put(tgUser.getId(), State.ADMIN);
                 Bot.getCurrentBot().send(message.getChatId(), "Print nickname!");
                 break;
+
+            case "help":
+                Bot.getCurrentBot().send(message.getChatId(), "/start - Registration in service\n" +
+                        "/new - Create new achievement\n/approve - Put Key to complete achievement\n" +
+                        "/admin - Upgrade user to admin(ADMINS ONLY)");
+                break;
+            default:
+                Bot.getCurrentBot().send(message.getChatId(), "Unknown command!\nUse /help for more information");
+                break;
+
         }
+        command = null;
     }
 
     ResponseData<Long> addNewAchievement(Achievement achievement){

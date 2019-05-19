@@ -63,4 +63,11 @@ public class HttpClient {
         ResponseData<Long> responseData = response.body();
         return responseData;
     }
+
+    public ResponseData<Boolean> isAdmin(String nickname) throws IOException {
+        Call<ResponseData<Boolean>> call = repository.isAdmin(nickname);
+        Response<ResponseData<Boolean>> response = call.execute();
+        ResponseData<Boolean> responseData = response.body();
+        return responseData;
+    }
 }

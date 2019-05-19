@@ -29,20 +29,7 @@ public interface HttpRepository {
     @POST("/admin/{nickname}/")
     Call<ResponseData<Long>> admin(@Path("nickname") String nickname);
 
-/*
-    @GET("customers")
-    Call<ResponseData<List<Customer>>> getCustomers();
+    @GET("/admin/{nickname}/")
+    Call<ResponseData<Boolean>> isAdmin(@Path("nickname") String nickname);
 
-    @GET("customer/{id}")
-    Call<ResponseData<Customer>> getCustomer(@Path("id") UUID id);
-
-    @POST("customer/{id}")
-    Call<ResponseData<UUID>> updateCustomer(@Path("id") UUID id, @Body Customer customer);
-
-    @POST("customers")
-    Call<ResponseData<UUID>> addCustomer(@Body Customer customer);
-
-    @DELETE("customer/{id}")
-    Call<ResponseData<UUID>> deleteCustomer(@Path("id") UUID id);
-    */
 }
