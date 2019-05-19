@@ -33,14 +33,14 @@ public class MessageHandler {
     }
 
     private String handleValue(String text, Message message) throws IOException {
-        String answer = "Wrong input!\nUse /help";
+        String answer = "Неверный ввод!\nИспользуйте /help для получения информации.";
         if(states.containsKey(message.getFrom().getId())){
             State state = states.get(message.getFrom().getId());
             switch (state){
                 case NEW:
                     String[] details = text.split(";");
                     if(details.length!=4){
-                        return "Wrong format!";
+                        return "Неверный формат ввода!\n";
                     }
                     Achievement achievement = new Achievement();
                     achievement.setAuthorId(Long.valueOf(message.getFrom().getId()));
@@ -66,7 +66,7 @@ public class MessageHandler {
                         answer = approveResponse.getData().toString();
                     } else {
 //                        answer = approveResponse.getErrorMessage();
-                        answer = "Code is incorrect!";
+                        answer = "Некорректный ввод!";
                     }
                     break;
 
@@ -77,7 +77,7 @@ public class MessageHandler {
                         answer = adminResponse.getData().toString();
                     } else {
 //                        answer = adminResponse.getErrorMessage();
-                        answer = "You haven't permission to do this!";
+                        answer = "У вас недостаточно прав, чтобы сделать это!";
                     }
                     break;
             }
@@ -90,6 +90,10 @@ public class MessageHandler {
         org.telegram.telegrambots.meta.api.objects.User tgUser = message.getFrom();
         switch (command) {
             case "start":
+                if(tgUser.getUserName()== null) {
+                    Bot.getCurrentBot().send(message.getChatId(), "Для регистрации необходим username!");
+                    break;
+                }
                 User user = new User();
                 user.setFirst_name(tgUser.getFirstName());
                 user.setLast_name(tgUser.getLastName());
@@ -98,39 +102,39 @@ public class MessageHandler {
                 user.setId(Long.valueOf(tgUser.getId()));
                 ResponseData<Long> addUserResponse = httpClient.addUser(user);
                 System.out.println(addUserResponse.toString());
-                Bot.getCurrentBot().send(message.getChatId(), "Welcome to Achivochka!\nRegistration being successful!\nFor more information /help");
+                Bot.getCurrentBot().send(message.getChatId(), "Добро пожаловать в Ачивочку!\nРегистрация прошла успешно!\nДля дополнительной информации введите /help");
                 break;
             case "new":
-                System.out.println(tgUser.getUserName());
                 ResponseData<Boolean> isAdmin = httpClient.isAdmin(tgUser.getUserName());
-                if(isAdmin.getData() == false){
+                System.out.println(isAdmin);
+                if(isAdmin == null || isAdmin.getData() == false){
                     Bot.getCurrentBot().send(message.getChatId(), "Отказано в доступе!");
                     break;
                 }
                 states.put(tgUser.getId(), State.NEW);
-                Bot.getCurrentBot().send(message.getChatId(), "Print details separated by ';' Name;description;cost(integer);url(image)");
+                Bot.getCurrentBot().send(message.getChatId(), "Напишите пункты ачивки, разделяя их знаком ;\nИмя;описание;стоимость(целое число);картинка(url)");
                 break;
-            case "approve":
+            case "achieve":
                 states.put(tgUser.getId(), State.APPROVE);
-                Bot.getCurrentBot().send(message.getChatId(), "Print code!");
+                Bot.getCurrentBot().send(message.getChatId(), "Введите код!");
                 break;
 
             case "admin":
                 if(message.getFrom().getId() != 139105610) {
-                    Bot.getCurrentBot().send(message.getChatId(), "Only admin can upgrade to admin!");
+                    Bot.getCurrentBot().send(message.getChatId(), "Только основной админ может повышать до админа!");
                     break;
                 }
                 states.put(tgUser.getId(), State.ADMIN);
-                Bot.getCurrentBot().send(message.getChatId(), "Print nickname!");
+                Bot.getCurrentBot().send(message.getChatId(), "Введите никнейм!");
                 break;
 
             case "help":
-                Bot.getCurrentBot().send(message.getChatId(), "/start - Registration in service\n" +
-                        "/new - Create new achievement\n/approve - Put Key to complete achievement\n" +
-                        "/admin - Upgrade user to admin(ADMINS ONLY)");
+                Bot.getCurrentBot().send(message.getChatId(), "/start - Регистрация в сервисе\n" +
+                        "/new - Создание новой ачивки\n/achieve - Введите код для завершения ачивки\n" +
+                        "/admin - Повысить права пользователя до админа (работает только для суперадмина)");
                 break;
             default:
-                Bot.getCurrentBot().send(message.getChatId(), "Unknown command!\nUse /help for more information");
+                Bot.getCurrentBot().send(message.getChatId(), "Неизвестная команда!\nИспользуйте /help для более детальной информации");
                 break;
 
         }

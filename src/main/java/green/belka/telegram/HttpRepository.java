@@ -29,7 +29,7 @@ public interface HttpRepository {
     @POST("/admin/{nickname}/")
     Call<ResponseData<Long>> admin(@Path("nickname") String nickname);
 
-    @GET("/admin/{nickname}/")
+    @GET("/check_admin/{nickname}")
     Call<ResponseData<Boolean>> isAdmin(@Path("nickname") String nickname);
 
 }
