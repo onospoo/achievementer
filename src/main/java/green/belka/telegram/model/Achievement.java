@@ -48,6 +48,10 @@ public class Achievement {
     @Setter
     private Long achievement_limit;
 
+    @Setter
+    @Getter
+    private String avatar;
+
 }
 //	@OneToOne(optional = false, mappedBy="id")
 //    private User author;
